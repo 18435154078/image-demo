@@ -111,7 +111,7 @@
       },
       async uploadImg(file) {
         let fs = new FormData()
-        fs.append('files', file)
+        fs.append('file', file)
         const { data } = await axios({
           method: 'post',
           url: '/upload',

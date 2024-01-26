@@ -286,11 +286,6 @@ isarray@~1.0.0:
   resolved "https://registry.npmmirror.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
   integrity sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==
 
-js-image-compressor@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmmirror.com/js-image-compressor/-/js-image-compressor-2.0.0.tgz#93ba3f35710189bd5d1fe3e50825117065f0c6f8"
-  integrity sha512-HUhGwVxwLsxXjP7ztQ1CF2iE6X1YRW1lcalJZYfNymPvuO4kK1bbLVeumVDZs6OPDUK1c0BPwhVH/SsRso8Jbw==
-
 media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.npmmirror.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
