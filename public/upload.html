@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片上传</title>
+  <link href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.15.14/theme-chalk/index.min.css" rel="stylesheet">
+  <script src="/js/vue.min.js"></script>
+  <script src="/js/vue-cropper.js"></script>
+  <script src="/js/lrz.all.bundle.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.5.0/axios.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/element-ui/2.15.14/index.min.js"></script>
+  <style>
+    .vue-cropper-wrap {
+      width: 100%;
+      height: 600px;
+    }
+
+    .el-dialog__body {
+      overflow: hidden;
+    }
+
+    .dialog-btn {
+      float: right;
+      margin-top: 20px;
+    }
+
+    .input-file {
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+</body>
+<script>
+  const vm = new Vue({
+    el: '#app',
+    data() {
+      return {
+        dialogVisible: false,
+        filename: '',
+        imgUrl: '',
+        option: {
+          img: '',             //裁剪图片的地址
+          outputSize: 0.1,       //裁剪生成图片的质量(可选0.1 - 1)
+          outputType: 'jpg',  //裁剪生成图片的格式（jpeg || png || webp）
+          info: true,          //图片大小信息
+          canScale: true,      //图片是否允许滚轮缩放
+          autoCrop: true,      //是否默认生成截图框
+          autoCropWidth: 1000,  //默认生成截图框宽度
+          autoCropHeight: 'auto', //默认生成截图框高度
+          fixed: true,         //是否开启截图框宽高固定比例
+          fixedNumber: [2, 1], //截图框的宽高比例
+          full: true,         //按原比例裁切图片，不失真
+          fixedBox: false,      //固定截图框大小，不允许改变
+          canMove: false,      //上传图片是否可以移动
+          canMoveBox: true,    //截图框能否拖动
+          original: true,     //上传图片按照原始比例渲染
+          centerBox: true,    //截图框是否被限制在图片里面
+          height: true,        //是否按照设备的dpr 输出等比例图片
+          infoTrue: false,     //true为展示真实输出图片宽高，false展示看到的截图框宽高
+          maxImgSize: 3000,    //限制图片最大宽度和高度
+          enlarge: 1,          //图片根据截图框输出比例倍数
+          mode: '230px 150px'  //图片默认渲染方式
+        },
+      }
+    },
+    methods: {
+      imgLoad() {
+        // this.option.fixedNumber = [2, 1]
+      },
+      base64ToFile(base64, fileName) {
+        let arr = base64.split(",");
+        // console.log(arr)
+        // let mime = arr[0].match(/:(.\*?);/) && arr[0].match(/:(.\*?);/)[1];
+        // console.log(mime)
+        let bstr = atob(arr[1]);
+        let n = bstr.length;
+        let u8arr = new Uint8Array(n);
+
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], fileName, { type: 'image/png' });
+      },
+      async handleFileChange() {
+        const file = this.$refs['file'].files[0]
+        if (!file) return
+        this.filename = file.name
+        const l = await lrz(file)
+        const blob = window.URL.createObjectURL(file)
+        this.option.img = blob
+        const img = new Image()
+        img.src = blob
+        img.onload = () => {
+          this.option.fixedNumber = [img.width, img.height, 1]
+          this.dialogVisible = true
+          this.$refs['file'].value = ''
+        }
+
+      },
+      submitImg() {
+        this.$refs['cropper'].getCropBlob(async blob => {
+          const file = new File([blob], this.filename, { type: blob.type })
+          const l = await lrz(file)
+          this.uploadImg(this.base64ToFile(l.base64, 'test.jpg'))
+        })
+      },
+      async uploadImg(file) {
+        let fs = new FormData()
+        fs.append('files', file)
+        const { data } = await axios({
+          method: 'post',
+          url: '/upload',
+          data: fs
+        })
+        this.imgUrl = data.data
+        this.dialogVisible = false
+        this.$message.success(data.msg)
+      }
+    },
+    template: `
+      <div>
+        <el-dialog title="裁剪图片" :visible.sync="dialogVisible" width="1300px">
+          <div class="vue-cropper-wrap">
+            <vueCropper
+              ref="cropper"
+              :img="option.img"
+              :outputSize="option.outputSize"
+              :outputType="option.outputType"
+              :info="option.info"
+              :canScale="option.canScale"
+              :autoCrop="option.autoCrop"
+              :autoCropWidth="option.autoCropWidth"
+              :autoCropHeight="option.autoCropHeight"
+              :fixed="option.fixed"
+              :fixedNumber="option.fixedNumber"
+              :full="option.full"
+              :fixedBox="option.fixedBox"
+              :canMove="option.canMove"
+              :canMoveBox="option.canMoveBox"
+              :original="option.original"
+              :centerBox="option.centerBox"
+              :height="option.height"
+              :infoTrue="option.infoTrue"
+              :maxImgSize="option.maxImgSize"
+              :enlarge="option.enlarge"
+              :mode="option.mode"
+              @imgLoad="imgLoad"
+            ></vueCropper>
+          </div>
+          <el-button class="dialog-btn" type="primary" @click="submitImg">确定</el-button>
+        </el-dialog>
+        <el-button @click.native="$refs['file'].click()">点击上传</el-button>
+        <input type="file" ref="file" class="input-file" @input="handleFileChange" accept="image/*" />
+        <img v-if="imgUrl" :src="imgUrl" />
+      </div>
+    `
+  })
+
+</script>
+
+</html>
