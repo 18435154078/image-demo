@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pdf上传</title>
+  <link rel="stylesheet" href="/css/pdf.css">
+  <script src="/js/vue.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.5.0/axios.js"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <template id="app-template">
+    <div class="pdf-wrap">
+      <div v-if="init" class="pdf-upload">
+        <div class="input-wrap" @click="$refs.file.click()" @drop="handledrop" @dragover="handledragover">
+          <span>点击这里选择文件，或者把一个文件拖到这里（支持PDF）。</span>
+          <input type="file" id="file" ref="file" @change="changeFile" accept="application/pdf">
+        </div>
+      </div>
+      <div v-else class="pdf-show">
+        <iframe :src="fullPdfUrl" ref="iframe"></iframe>
+        <div class="chat-wrap">
+          <div class="title">Chat</div>
+          <div class="chat-list">
+            <div class="chat-item" v-if="showInit">
+              <div class="ai">
+                <div class="chatpdf-markdown">
+                  <p>Hello and welcome to this exciting PDF file on abdominal symptom improvement during clinical trials
+                    of Tenapanor in patients with irritable bowel syndrome with constipation! This study, conducted by a
+                    team of esteemed researchers, provides valuable insights into the potential benefits of Tenapanor in
+                    managing symptoms of IBS-C.</p>
+                  <ol>
+                    <li><span class="question"><span role="img" aria-label="send" tabindex="-1"
+                          class="anticon anticon-send" style="cursor: pointer; color: rgb(23, 119, 255);"><svg
+                            viewBox="64 64 896 896" focusable="false" data-icon="send" width="1em" height="1em"
+                            fill="currentColor" aria-hidden="true">
+                            <defs>
+                              <style></style>
+                            </defs>
+                            <path
+                              d="M931.4 498.9L94.9 79.5c-3.4-1.7-7.3-2.1-11-1.2a15.99 15.99 0 00-11.7 19.3l86.2 352.2c1.3 5.3 5.2 9.6 10.4 11.3l147.7 50.7-147.6 50.7c-5.2 1.8-9.1 6-10.3 11.3L72.2 926.5c-.9 3.7-.5 7.6 1.2 10.9 3.9 7.9 13.5 11.1 21.5 7.2l836.5-417c3.1-1.5 5.6-4.1 7.2-7.1 3.9-8 .7-17.6-7.2-21.6zM170.8 826.3l50.3-205.6 295.2-101.3c2.3-.8 4.2-2.6 5-5 1.4-4.2-.8-8.7-5-10.2L221.1 403 171 198.2l628 314.9-628.2 313.2z">
+                            </path>
+                          </svg></span> What were the key findings of the post hoc analysis on abdominal symptom
+                        improvement in patients with IBS-C treated with Tenapanor?</span></li>
+                    <li><span class="question"><span role="img" aria-label="send" tabindex="-1"
+                          class="anticon anticon-send" style="cursor: pointer; color: rgb(23, 119, 255);"><svg
+                            viewBox="64 64 896 896" focusable="false" data-icon="send" width="1em" height="1em"
+                            fill="currentColor" aria-hidden="true">
+                            <defs>
+                              <style></style>
+                            </defs>
+                            <path
+                              d="M931.4 498.9L94.9 79.5c-3.4-1.7-7.3-2.1-11-1.2a15.99 15.99 0 00-11.7 19.3l86.2 352.2c1.3 5.3 5.2 9.6 10.4 11.3l147.7 50.7-147.6 50.7c-5.2 1.8-9.1 6-10.3 11.3L72.2 926.5c-.9 3.7-.5 7.6 1.2 10.9 3.9 7.9 13.5 11.1 21.5 7.2l836.5-417c3.1-1.5 5.6-4.1 7.2-7.1 3.9-8 .7-17.6-7.2-21.6zM170.8 826.3l50.3-205.6 295.2-101.3c2.3-.8 4.2-2.6 5-5 1.4-4.2-.8-8.7-5-10.2L221.1 403 171 198.2l628 314.9-628.2 313.2z">
+                            </path>
+                          </svg></span> How do the results of this study contribute to our understanding of the efficacy
+                        of Tenapanor in managing symptoms of IBS-C?</span></li>
+                    <li><span class="question"><span role="img" aria-label="send" tabindex="-1"
+                          class="anticon anticon-send" style="cursor: pointer; color: rgb(23, 119, 255);"><svg
+                            viewBox="64 64 896 896" focusable="false" data-icon="send" width="1em" height="1em"
+                            fill="currentColor" aria-hidden="true">
+                            <defs>
+                              <style></style>
+                            </defs>
+                            <path
+                              d="M931.4 498.9L94.9 79.5c-3.4-1.7-7.3-2.1-11-1.2a15.99 15.99 0 00-11.7 19.3l86.2 352.2c1.3 5.3 5.2 9.6 10.4 11.3l147.7 50.7-147.6 50.7c-5.2 1.8-9.1 6-10.3 11.3L72.2 926.5c-.9 3.7-.5 7.6 1.2 10.9 3.9 7.9 13.5 11.1 21.5 7.2l836.5-417c3.1-1.5 5.6-4.1 7.2-7.1 3.9-8 .7-17.6-7.2-21.6zM170.8 826.3l50.3-205.6 295.2-101.3c2.3-.8 4.2-2.6 5-5 1.4-4.2-.8-8.7-5-10.2L221.1 403 171 198.2l628 314.9-628.2 313.2z">
+                            </path>
+                          </svg></span> What implications do the findings of this study have for the future treatment of
+                        patients with IBS-C?</span></li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            <div class="chat-item">
+              <div class="user" @click="search('Ardelyx')">Weekly AS response was defined as achieving a reduction of ≥2
+                points in AS for a given week,
+                which has been shown to be an appropriate threshold for clinically meaningful change in patients (22).
+                Weekly response rates were analyzed using the Pearson’s chi-square test, in which patients with a
+                missing weekly AS due to discontinuation or an invalid week were included in the calculation and
+                assumed to have no response in that week (i.e., a worst-case imputation approach)</div>
+            </div>
+          </div>
+        </div>
+        <!-- <button @click="page++">click</button> -->
+      </div>
+    </div>
+  </template>
+</body>
+
+<script>
+  const vm = new Vue({
+    el: '#app',
+    data: {
+      init: true,
+      showInit: false,
+      pdfUrl: '',
+      page: 1,
+      iframeDocument: null,
+      iframeWidth: 0,
+      chatList: []
+    },
+    template: `#app-template`,
+    computed: {
+      fullPdfUrl() {
+        return `/pdfjs/web/viewer.html?file=${this.pdfUrl}`
+      }
+    },
+    mounted() {
+
+    },
+    watch: {
+      page() {
+        let paper = iframeDocument.querySelectorAll(`[data-page-number="${this.page}"]`)[1]
+        iframeDocument.querySelector('#viewerContainer').scrollTo(0, paper.offsetTop)
+      }
+    },
+    methods: {
+      async changeFile() {
+        const file = this.$refs.file.files[0]
+        const blob = window.URL.createObjectURL(file)
+        this.showPdf(blob)
+        // const formData = new FormData()
+        // formData.append('file', file)
+        // const res = await axios({
+        //   url: '/api/chatpaper/file-upload.php',
+        //   method: 'post',
+        //   data: formData
+        // })
+        // console.log(res)
+      },
+      handledrop(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const file = e.dataTransfer.files[0]
+        const blob = window.URL.createObjectURL(file)
+        this.showPdf(blob)
+      },
+      handledragover(e) {
+        e.preventDefault()
+      },
+      showPdf(blob) {
+        this.pdfUrl = blob
+        this.init = false
+        this.$nextTick(() => {
+          this.$refs['iframe'].onload = () => {
+            this.showInit = true
+            const iframe = document.querySelector('iframe')
+            if (iframe) this.iframeDocument = document.querySelector('iframe').contentWindow.document
+          }
+        })
+      },
+      search(word) {
+        let input = this.iframeDocument.querySelector('#findInput')
+        let findNext = this.iframeDocument.querySelector('#findNext')
+        input.value = word || ''
+        findNext.click()
+      }
+    }
+  })
+
+</script>
+
+</html>

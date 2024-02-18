@@ -1,0 +1,89 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: #f9f9f9;
+}
+
+iframe {
+  border: none;
+  height: calc(100% - 4px);
+  width: 100%;
+}
+.pdf-wrap {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pdf-upload {
+  width: 40%;
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  cursor: pointer;
+}
+.input-wrap {
+  border-radius: 10px;
+  border: 1px dashed #ccc;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#file {
+  display: none;
+}
+.pdf-show {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+}
+.chat-wrap {
+  width: 800px;
+  padding: 10px 0 10px 20px;
+  background: #fff;
+  height: 100%;
+  box-sizing: border-box;
+}
+.chat-list {
+  height: calc(100% - 50px);
+  overflow-y: auto;
+  padding-right: 10px;
+}
+.chat-item {
+  overflow: hidden;
+}
+.chat-item .ai,
+.chat-item .user {
+  max-width: 70%;
+  font-size: 12px;
+  line-height: 24px;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 16px;
+  box-sizing: border-box;
+}
+.chat-item .ai {
+  background: #f9f9fe;
+}
+
+.chat-item .user {
+  color: #fff;
+  background: #1777ff;
+  float: right;
+}
+
+.chat-item .user {
+}
+
+li {
+  list-style: none;
+}
